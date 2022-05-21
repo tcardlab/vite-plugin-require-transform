@@ -19,11 +19,11 @@ This plugin  amis to support require when serve with vite.
 ## Install
 
 ```bash
-yarn add -D vite-plugin-require-transform
+yarn add -D https://github.com/tcardlab/vite-plugin-require-transform/tarball/release
 ```
 or 
 ```bash
-npm i vite-plugin-require-transform --save-dev
+npm i https://github.com/tcardlab/vite-plugin-require-transform/tarball/release --save-dev
 ```
 ## Usage
 ```typescript
@@ -55,6 +55,9 @@ export type VitePluginRequireTransformParamsType = {
 	importPrefix? = '_vite_plugin_require_transform_': string,
 	//to deal with the requireSpecifier
 	importPathHandler?: Function
+	//fileRegex still transforms the require of null matches.
+	//to completly optout of the transform, try:
+        exclude: /^SomeModuleName$/
 }
 ```
 
