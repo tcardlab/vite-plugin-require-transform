@@ -11,13 +11,14 @@ export type VitePluginRequireTransformParamsType = {
 	//prefix that would plugin into the requireSpecifier 
 	importPrefix?: string,
 	//to deal with the requireSpecifier
-	importPathHandler?: Function
+	importPathHandler?: Function,
+	exclude?: RegExp // /^SomeNodeModule$/ to completely ignore the transform
 }
 export default function vitePluginRequireTransform(
 	params: VitePluginRequireTransformParamsType = {}
 ) {
 
-	const { fileRegex = /.ts$|.tsx$/, importPrefix: prefix = '_vite_plugin_require_transform_', importPathHandler } = params;
+	const { fileRegex = /.ts$|.tsx$/, importPrefix: prefix = '_vite_plugin_require_transform_', importPathHandler, exclude } = params;
 	/**
 	 * <path,exports>
 	 */
@@ -47,6 +48,12 @@ export default function vitePluginRequireTransform(
 						if (path.isIdentifier({ name: 'require' }) && t.isCallExpression(path?.parentPath?.node)) {
 							let originalRequirePath = (path.parentPath.node.arguments[0] as t.StringLiteral).value;
 							let requirePath = originalRequirePath;
+							
+							if (exclude.test(requirePath)) {
+							  //console.log(requirePath)
+							  return;
+						        }
+							
 							//get the file name
 							if (importPathHandler) {
 								requirePath = importPathHandler(requirePath);
